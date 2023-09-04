@@ -2,8 +2,7 @@ package employe
 
 import "github.com/labstack/echo/v4"
 
-type Core struct {
-	ID        uint      
+type Core struct {   
 	FirstName string 
 	LastName  string 
 	HireDate  string 
@@ -12,7 +11,7 @@ type Core struct {
 }  
 
 type Repository interface {
-	CreateEmploye(employe Core, employeID uint) error
+	CreateEmploye(employe Core) (Core, error)
 	GetEmployes() ([]Core, error)
 	GetEmployeByID(employeid uint) ([]Core, error)
 	GetEmploye(employeID uint) (Core, error)
@@ -21,7 +20,7 @@ type Repository interface {
 }
 
 type Service interface {
-	CreateEmploye(employe Core, employeID uint) error
+	CreateEmploye(employe Core) error
 	GetEmployes() ([]Core, error)
 	GetEmployeByID(employeid uint) ([]Core, error)
 	GetEmploye(employeID uint) (Core, error)

@@ -2,7 +2,9 @@ package services
 
 import (
 	"employe/app/features/employe"
+	"employe/helper"
 	"errors"
+	"fmt"
 
 	"gorm.io/gorm"
 )
@@ -15,10 +17,10 @@ func New(r employe.Repository) employe.Service {
 	return &EmployeService{r: r}
 }
 
-func (s *EmployeService) CreateEmploye(employe employe.Core, employeID uint) error {
-	err := s.r.CreateEmploye(employe, employeID)
+func (s *EmployeService) CreateEmploye(employe employe.Core) error {
+	 _ , err := s.r.CreateEmploye(employe)
 	if err != nil {
-		return err
+		 return errors.New("Failed to register user")
 	}
 	return nil 
 } 
@@ -48,9 +50,19 @@ func (es *EmployeService) GetEmploye(employeID uint) (employe.Core, error) {
 }
 
 func (es *EmployeService) UpdateEmploye(id uint, updatedEmploye employe.Core) error {
-	updatedEmploye.ID = id
+	hashedPassword, err := helper.HashedPassword(updatedEmploye.HireDate) 
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %v", err)
+	}
+	updatedEmploye = employe.Core{
+		FirstName : updatedEmploye.FirstName,
+		LastName   : updatedEmploye.LastName,
+		TerminationDate  : updatedEmploye.TerminationDate,
+		Salary: updatedEmploye.Salary,
+		HireDate   : string(hashedPassword),
+	}
 	if err := es.r.UpdateEmploye(id, updatedEmploye); err != nil {
-		return nil 
+		return fmt.Errorf("Error while updating %d: %v", id, err)
 	}
 	return nil
 }

@@ -2,7 +2,9 @@ package repository
 
 import (
 	"employe/app/features/employe"
+	"employe/helper"
 	"errors"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -16,19 +18,25 @@ func New(db *gorm.DB) *EmployeRepository {
 	return &EmployeRepository{db: db}
 }
 
-func (er *EmployeRepository) CreateEmploye(employe employe.Core, employeID uint) error {
-	var err error 
-	tx := er.db.Begin()
-
-	newEmploye := Employee {
-	FirstName         : employe.FirstName,
-	LastName          : employe.LastName,
-	HireDate		  : employe.HireDate,
-	TerminationDate   : employe.TerminationDate,
-	Salary            : employe.Salary,
-
+func (er *EmployeRepository) CreateEmploye(employe employe.Core) (employe.Core, error ) {
+	var input = Employee{}
+	hashedPassword, err := helper.HashedPassword(employe.FirstName)
+	if err != nil {
+		log.Println("Hashing Password error", err.Error())
+		return employe.Core{}, nil 
 	}
-	err = tx.Table("employe").Create(&newEmploye).Error 
+
+	
+	input.FirstName       = employe.FirstName
+	input.LastName        = employe.LastName
+	input.HireDate	      = hashedPassword
+	input.TerminationDate = employe.TerminationDate
+	input.Salary          = employe.Salary
+
+	
+	if err := er.db.Table("employe").Create(&newEmploye).Error; err != nil {
+		log.Println("Create error")
+	} 
 	if err != nil {
 		tx.Rollback()
 		return err 
@@ -63,7 +71,6 @@ func (er *EmployeRepository) GetEmploye(employeID uint) (employe.Core, error) {
 		return employe.Core{}, result.Error
 	}
 		return employe.Core{
-			ID: input.ID,
 			FirstName:input.FirstName,
 			LastName:input.LastName,
 			HireDate: input.HireDate,
@@ -76,7 +83,6 @@ func (er *EmployeRepository) GetEmploye(employeID uint) (employe.Core, error) {
 
 func (er *EmployeRepository) UpdateEmploye(id uint, updatedemploye employe.Core) error {
 	if err := er.db.Model(&Employee{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"id"			    : updatedemploye.ID, 
 		"firstname"		    : updatedemploye.FirstName,
 		"lastname"			: updatedemploye.LastName,
 		"hiredate"		    : updatedemploye.HireDate,

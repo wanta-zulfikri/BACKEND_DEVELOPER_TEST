@@ -1,7 +1,6 @@
 package handler 
 
 type RequestCreateEmploye struct {
-	ID              uint     `json:"id"` 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`
@@ -9,8 +8,7 @@ type RequestCreateEmploye struct {
 	Salary          string   `json:"salary"`
 } 
 
-type RequestUpdateEmploye struct {
-	ID              uint     `json:"id"` 
+type RequestUpdateEmploye struct { 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`

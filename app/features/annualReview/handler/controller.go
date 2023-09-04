@@ -31,7 +31,7 @@ func (ar *AnnualController) CreateAnnual()echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "Missing or Malformed JWT"+err.Error(), nil))
 		} 
 
-		id := claims.ID 
+		id := claims.ID
 
 		if err := c.Bind(&input); err != nil {
 			c.Logger().Error("Failed to bind input:", err)
@@ -39,7 +39,7 @@ func (ar *AnnualController) CreateAnnual()echo.HandlerFunc {
 		}
 
 		newAnnual := annualreview.Core{
-			ID:         id,
+			ID:         input.ID,
 			EmplID:     input.EmplID,
 			ReviewDate: input.ReviewDate,
 		} 

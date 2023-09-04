@@ -1,7 +1,6 @@
 package handler
 
-type ResponseGetEmployes struct {
-	ID              uint     `json:"id"` 
+type ResponseGetEmployes struct { 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`
@@ -9,8 +8,7 @@ type ResponseGetEmployes struct {
 	Salary          string   `json:"salary"`
 } 
 
-type ResponseGetEmploye struct {
-	ID              uint     `json:"id"` 
+type ResponseGetEmploye struct { 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`
@@ -25,8 +23,7 @@ type EmployeResponse struct {
 	Data    EmployeData  `json:"data"`
 }
 
-type EmployeData struct {
-	ID              uint     `json:"id"` 
+type EmployeData struct { 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`
@@ -50,8 +47,7 @@ type Pagination struct {
 	TotalItems int `json:"total_items"`
 }
 
-type ResponseUpdateEmployes struct {
-	ID              uint     `json:"id"` 
+type ResponseUpdateEmployes struct { 
 	FirstName       string   `json:"firstname"` 
 	LastName        string   `json:"lastname"`
 	HireDate        string   `json:"hiredate"`

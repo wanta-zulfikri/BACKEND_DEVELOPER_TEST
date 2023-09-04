@@ -24,53 +24,18 @@ func New(h employe.Service, c *config.Configuration) employe.Handler {
 
 func (ec *EmployeController) CreateEmploye() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var input RequestCreateEmploye
-		tokenString := c.Request().Header.Get("Authorization")
-		claims, err := middleware.ValidateJWT2(tokenString)
-		if err != nil {
-			return c.JSON(http.StatusUnauthorized, helper.ResponseFormat(http.StatusUnauthorized, "Missing or Malformed JWT"+err.Error(), nil))
-		}
-
-		id := claims.ID
-
+		input := RequestCreateEmploye{} 
 		if err := c.Bind(&input); err != nil {
-			c.Logger().Error("Failed to bind input: ", err)
+			c.Logger().Error(err.Error())
 			return c.JSON(http.StatusBadRequest, helper.ResponseFormat(http.StatusBadRequest, "Bad Request", nil))
-		} 
-		
-		newEmploye := employe.Core{
-			ID:            id,
-			FirstName: input.FirstName,
-			LastName: input.LastName,
-			HireDate: input.HireDate,
-			TerminationDate: input.TerminationDate,
-			Salary: input.Salary,
-	
 		}
-
-		err = ec.s.CreateEmploye(newEmploye, id)
+		err := ec.s.CreateEmploye(employe.Core{FirstName: input.FirstName, LastName: input.LastName, HireDate: input.HireDate, TerminationDate: input.TerminationDate})
 		if err != nil {
-			c.Logger().Error("Failed to create employe: ", err)
-			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "Internal Server Error", nil))
-		} 
-
-		response := EmployeResponse{
-			Code:    http.StatusCreated,
-			Message: "Success created an employe",
-			Data: EmployeData{
-				ID: newEmploye.ID,
-				FirstName: newEmploye.FirstName,
-				LastName: newEmploye.LastName,
-				HireDate: newEmploye.HireDate,
-				TerminationDate: newEmploye.TerminationDate,
-				Salary: newEmploye.Salary,
-			},
+			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "Internet Server Error", nil))
 		}
-		return c.JSON(http.StatusCreated, response)
+		return c.JSON(http.StatusOK, helper.ResponseFormat(http.StatusCreated, "Success Created an Account", nil)) 
 	}
 } 
-
-
 
 func (ec *EmployeController) GetEmployes() echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -94,7 +59,6 @@ func (ec *EmployeController) GetEmployes() echo.HandlerFunc {
 		formattedEmployes := []ResponseGetEmployes{}
 		for _, employe := range employes {
 			formattedEmploye := ResponseGetEmployes{
-				ID: employe.ID,
 				FirstName: employe.FirstName,
 				LastName: employe.LastName,
 				HireDate: employe.HireDate,
@@ -169,7 +133,6 @@ func (ec *EmployeController) GetEmployeByID() echo.HandlerFunc {
 		formattedEmployes := []ResponseGetEmployes{}
 		for _, employe := range employes {
 			formattedEmploye := ResponseGetEmployes{
-				ID: employe.ID,
 				FirstName: employe.FirstName,
 				LastName: employe.LastName,
 				HireDate: employe.HireDate,
@@ -232,7 +195,6 @@ func (ec *EmployeController) GetEmploye() echo.HandlerFunc {
 		}
 
 		response := ResponseGetEmploye{
-			ID: employe.ID,
 			FirstName: employe.FirstName,
 			LastName: employe.LastName,
 			HireDate: employe.HireDate,
@@ -264,7 +226,6 @@ func (ec *EmployeController) UpdateEmploye() echo.HandlerFunc {
 		}
 
 		updatedEmploye := employe.Core{
-			ID:            uint(id), 
 			FirstName:         input.FirstName,
 			LastName:          input.LastName,
 			HireDate:          input.HireDate,
@@ -273,14 +234,13 @@ func (ec *EmployeController) UpdateEmploye() echo.HandlerFunc {
 			
 		}
 
-		err = ec.s.UpdateEmploye(updatedEmploye.ID, updatedEmploye)
+		err = ec.s.UpdateEmploye(uint(id), updatedEmploye)
 		if err != nil {
 			c.Logger().Error("Failed to update employe: ", err)
 			return c.JSON(http.StatusInternalServerError, helper.ResponseFormat(http.StatusInternalServerError, "Internal Server Error", nil))
 		}
 
 		response := ResponseUpdateEmployes{
-			ID: updatedEmploye.ID,
 			FirstName: updatedEmploye.FirstName,
 			LastName: updatedEmploye.LastName,
 			HireDate: updatedEmploye.HireDate,

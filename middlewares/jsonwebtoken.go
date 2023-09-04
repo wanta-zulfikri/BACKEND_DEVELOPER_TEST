@@ -79,8 +79,8 @@ func ValidateJWTUsername(authHeader string) (string, error) {
 		return username, nil
 } 
 
-type Claims struct {
-	ID 		     uint     `json:"id"`
+type Claims struct { 
+	ID           uint     `json:"id"`
 	FirstName    string   `json:"firstname"`
 	LastName     string   `json:"lastname"`
 }
